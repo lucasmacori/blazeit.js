@@ -1,0 +1,30 @@
+{
+  "name": "blaze.js",
+  "version": "0.1.0",
+  "description": "An extremely quick way to create a CRUD server out a JS object",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "dist/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/LegitBaboulinet/blaze.js.git"
+  },
+  "keywords": [
+    "blaze"
+  ],
+  "author": "LegitBaboulinet",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LegitBaboulinet/blaze.js/issues"
+  },
+  "homepage": "https://github.com/LegitBaboulinet/blaze.js#readme",
+  "devDependencies": {
+    "typescript": "^3.3.3"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "mongoose": "^5.4.14"
+  }
+}
