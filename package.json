@@ -4,7 +4,8 @@
   "description": "An extremely quick way to create a CRUD server out a JS object",
   "main": "dist/index.js",
   "scripts": {
-    "test": "dist/test.js"
+    "start": "dist/index.js",
+    "test": "test.js"
   },
   "repository": {
     "type": "git",
@@ -20,11 +21,13 @@
   },
   "homepage": "https://github.com/LegitBaboulinet/blaze.js#readme",
   "devDependencies": {
+    "@types/node": "^11.9.4",
     "typescript": "^3.3.3"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
+    "mocha": "^6.0.1",
     "mongoose": "^5.4.14"
   }
 }
