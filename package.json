@@ -1,5 +1,5 @@
 {
-  "name": "blaze.js",
+  "name": "blazeit.js",
   "version": "0.1.0",
   "description": "An extremely quick way to create a CRUD server out a JS object",
   "main": "dist/index.js",
@@ -12,7 +12,12 @@
     "url": "git+ssh://git@github.com/LegitBaboulinet/blaze.js.git"
   },
   "keywords": [
-    "blaze"
+    "blazeit",
+    "server",
+    "express",
+    "quick",
+    "CRUD",
+    "MongoDB"
   ],
   "author": "LegitBaboulinet",
   "license": "ISC",
