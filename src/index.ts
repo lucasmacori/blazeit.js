@@ -1,6 +1,7 @@
 import { Server } from './lib/server';
 import { EntryPoint } from './lib/classes/entryPoint';
 import { Database } from './lib/database';
+import { Route } from './lib/classes/route';
 
 export class Blazeit {
 
@@ -25,7 +26,7 @@ export class Blazeit {
      *              lastName: String,
      *              birthDay: Date,
      *              isMarried: Boolean,
-     *              numberOfChildren: number
+     *              numberOfChildren: Number
      *          }
      *      ]
      * }
@@ -33,6 +34,7 @@ export class Blazeit {
     constructor(private values: any) {
         this.checkValues();
         this.createDatabase();
+        this.createModels();
         this.createEntryPoints()
             .then(
                 (entryPoints: Array<EntryPoint>) => {
@@ -69,11 +71,68 @@ export class Blazeit {
         );
     }
 
+    private createModels(): void {
+        // Create a model for each model given in the values
+        // And store them in a dict of models
+        // Name: entrypoint_endpoint
+    }
+
     private createEntryPoints(): Promise<Array<EntryPoint>> {
         return new Promise(
             (resolve, reject) => {
-                // TODO: For each model, create an entrypoint with the name of that model.
-                // Create a GET, POST, PUT and DELETE method
+                const entryPoints: Array<EntryPoint> = new Array<EntryPoint>();
+
+                this.values.models.forEach(
+                    (model: any) => {
+                        // Getting the name of the columns of the model
+                        const columns: Array<string> = Object.keys(model);
+
+                        columns.forEach(
+                            (column: string) => {
+                                entryPoints.push(
+                                    new EntryPoint(
+                                        '/' + column,
+                                        new Array<Route>(
+                                            new Route(
+                                                '/',
+                                                'GET',
+                                                'GET ' + column,
+                                                (req, res) => {
+                                                    res.send('GET ' + column);
+                                                }
+                                            ),
+                                            new Route(
+                                                '/',
+                                                'POST',
+                                                'POST ' + column,
+                                                (req, res) => {
+                                                    res.send('POST ' + column);
+                                                }
+                                            ),
+                                            new Route(
+                                                '/',
+                                                'PUT',
+                                                'PUT ' + column,
+                                                (req, res) => {
+                                                    res.send('PUT ' + column);
+                                                }
+                                            ),
+                                            new Route(
+                                                '/',
+                                                'DELETE',
+                                                'DELETE ' + column,
+                                                (req, res) => {
+                                                    res.send('DELETE ' + column);
+                                                }
+                                            ),
+                                        )
+                                    )
+                                );
+                            }
+                        );
+                    }
+                );
+                resolve(entryPoints);
             }
         );
     }
@@ -83,6 +142,7 @@ export class Blazeit {
      * Create a server with the given parameters and generated entrypoints
      */
     private createServer(entryPoints: Array<EntryPoint>): void {
+        console.log(entryPoints);
         const port: number = (this.values.server['port']) ? this.values.server['port'] : 3000;
         this.server = new Server(port, entryPoints);
         this.server.serve();

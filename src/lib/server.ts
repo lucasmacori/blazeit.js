@@ -82,6 +82,7 @@ export class Server {
      * @param route : the route to create
      */
     private createRoute(entryPoint: EntryPoint, route: Route): void {
+        console.log('entrypoint', entryPoint);
 
         // Setting up the router
         const router = new Express.Router();
