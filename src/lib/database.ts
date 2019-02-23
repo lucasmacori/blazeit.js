@@ -5,7 +5,7 @@ export class Database {
     constructor(
         private _hostname: string,
         private _port: number,
-        private _databaseName: string
+        private _name: string
     ) {
         this.init();
     }
@@ -25,11 +25,11 @@ export class Database {
         this._port = value;
     }
 
-    public get databaseName(): string {
-        return this._databaseName;
+    public get name(): string {
+        return this._name;
     }
-    public set databaseName(value: string) {
-        this._databaseName = value;
+    public set name(value: string) {
+        this._name = value;
     }
 
     /**
@@ -42,7 +42,7 @@ export class Database {
             'mongodb://' +
             this.hostname + '/'+
             portStr +
-            this.databaseName,
+            this.name,
             { useNewUrlParser: true }
         );
     }
