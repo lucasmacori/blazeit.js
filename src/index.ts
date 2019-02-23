@@ -3,9 +3,13 @@ import { EntryPoint } from './lib/classes/entryPoint';
 import { Database } from './lib/database';
 import { Route } from './lib/classes/route';
 
+import * as Mongoose from 'mongoose';
+import { createServer } from 'http';
+
 export class Blazeit {
 
     private server: Server;
+    private entryPoints: Array<EntryPoint>;
     private database: Database;
 
     /**
@@ -35,17 +39,8 @@ export class Blazeit {
         this.checkValues();
         this.createDatabase();
         this.createModels();
-        this.createEntryPoints()
-            .then(
-                (entryPoints: Array<EntryPoint>) => {
-                    this.createServer(entryPoints);
-                }
-            )
-            .catch(
-                (err: any) => {
-                    throw err;
-                }
-            );
+        this.createEntryPoints();
+        this.createServer();
     }
 
     /**
@@ -77,10 +72,10 @@ export class Blazeit {
         // Name: entrypoint_endpoint
     }
 
-    private createEntryPoints(): Promise<Array<EntryPoint>> {
-        return new Promise(
-            (resolve, reject) => {
-                const entryPoints: Array<EntryPoint> = new Array<EntryPoint>();
+    private createEntryPoints(): void {
+        // TODO: Split this in several functions
+        // This is NOT okay ! o(>< )o
+        const entryPoints: Array<EntryPoint> = new Array<EntryPoint>();
 
                 this.values.models.forEach(
                     (model: any) => {
@@ -128,23 +123,20 @@ export class Blazeit {
                                         )
                                     )
                                 );
-                            }
+                            } // Is it over yet ?
                         );
                     }
                 );
-                resolve(entryPoints);
-            }
-        );
+                this.entryPoints = entryPoints;
     }
 
     /**
      * createServer
      * Create a server with the given parameters and generated entrypoints
      */
-    private createServer(entryPoints: Array<EntryPoint>): void {
-        console.log(entryPoints);
+    private createServer(): void {
         const port: number = (this.values.server['port']) ? this.values.server['port'] : 3000;
-        this.server = new Server(port, entryPoints);
+        this.server = new Server(port, this.entryPoints);
         this.server.serve();
     }
 }

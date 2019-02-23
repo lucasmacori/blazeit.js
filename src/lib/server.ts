@@ -129,6 +129,7 @@ export class Server {
      * Starts the server on the given port
      */
     public serve(): void {
+        const portStr: number = (this.port) ? this.port : 3000;
         this.app.listen(
             this.port,
             (err: any) => {

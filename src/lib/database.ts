@@ -37,12 +37,14 @@ export class Database {
      * Initialize the connection to the database
      */
     private init(): void {
+        const hostnameStr: string = (this.hostname) ? this.hostname : 'localhost';
         const portStr: string = (this.port) ? ':' + this.port : '';
+        const nameStr: string = (this.name) ? this.name : 'Blazeit';
         Mongoose.connect(
             'mongodb://' +
-            this.hostname + '/'+
+            hostnameStr + '/'+
             portStr +
-            this.name,
+            nameStr,
             { useNewUrlParser: true }
         );
     }
