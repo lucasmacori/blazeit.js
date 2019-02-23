@@ -36,13 +36,7 @@ export class Server {
      */
     private init(): void {
         this.app = new Express();
-        this.app.use(
-            BodyParser.urlencoded(
-                {
-                    extended: false
-                }
-            )
-        );
+        this.app.use(BodyParser.json());
         this.initRoutes();
     }
 
@@ -82,8 +76,6 @@ export class Server {
      * @param route : the route to create
      */
     private createRoute(entryPoint: EntryPoint, route: Route): void {
-        console.log('entrypoint', entryPoint);
-
         // Setting up the router
         const router = new Express.Router();
         switch (route.method.toUpperCase()) {

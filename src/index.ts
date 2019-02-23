@@ -4,13 +4,13 @@ import { Database } from './lib/database';
 import { Route } from './lib/classes/route';
 
 import * as Mongoose from 'mongoose';
-import { createServer } from 'http';
 
 export class Blazeit {
 
     private server: Server;
     private entryPoints: Array<EntryPoint>;
     private database: Database;
+    private models: Map<string, any> = new Map<string, any>();
 
     /**
      * @param values : the object that contains everything Blazeit needs or does not
@@ -67,9 +67,18 @@ export class Blazeit {
     }
 
     private createModels(): void {
-        // Create a model for each model given in the values
-        // And store them in a dict of models
-        // Name: entrypoint_endpoint
+        this.values.models.forEach(
+            (model: any, index) => {
+                const collections: Array<string> = Object.keys(model);
+                this.models.set(
+                    collections[index],
+                    Mongoose.model(
+                        collections[index],
+                        new Mongoose.Schema(model[collections[index]])
+                    )
+                );
+            }
+        );
     }
 
     private createEntryPoints(): void {
@@ -77,57 +86,105 @@ export class Blazeit {
         // This is NOT okay ! o(>< )o
         const entryPoints: Array<EntryPoint> = new Array<EntryPoint>();
 
-                this.values.models.forEach(
-                    (model: any) => {
-                        // Getting the name of the columns of the model
-                        const columns: Array<string> = Object.keys(model);
+        this.values.models.forEach(
+            (model: any) => {
+                // Getting the name of the collections of the model
+                const collections: Array<string> = Object.keys(model);
 
-                        columns.forEach(
-                            (column: string) => {
-                                entryPoints.push(
-                                    new EntryPoint(
-                                        '/' + column,
-                                        new Array<Route>(
-                                            new Route(
-                                                '/',
-                                                'GET',
-                                                'GET ' + column,
-                                                (req, res) => {
-                                                    res.send('GET ' + column);
+                collections.forEach(
+                    (collection: string) => {
+                        entryPoints.push(
+                            new EntryPoint(
+                                '/' + collection,
+                                new Array<Route>(
+                                    new Route(
+                                        '/',
+                                        'GET',
+                                        'GET ' + collection,
+                                        (req, res) => {
+                                            this.models.get(collection).find({})
+                                                .exec(
+                                                    (err: any, objects: Array<any>) => {
+                                                        if (!err) {
+                                                            res.json(objects);
+                                                        } else {
+                                                            res.status(500);
+                                                            res.json({
+                                                                message: 'Could not get ' + collection + '\n' + err
+                                                            });
+                                                        }
+                                                    }
+                                                );
+                                        }
+                                    ),
+                                    new Route(
+                                        '/',
+                                        'POST',
+                                        'POST ' + collection,
+                                        (req, res) => {
+                                            this.models.get(collection).create(
+                                                req.body,
+                                                (err: any) => {
+                                                    if (!err) {
+                                                        res.json({ status: 'OK' });
+                                                    } else {
+                                                        res.status(500);
+                                                        res.json({
+                                                            message: 'Could not create ' + collection + '\n' + err 
+                                                        });
+                                                    }
                                                 }
-                                            ),
-                                            new Route(
-                                                '/',
-                                                'POST',
-                                                'POST ' + column,
-                                                (req, res) => {
-                                                    res.send('POST ' + column);
+                                            );
+                                        }
+                                    ),
+                                    new Route(
+                                        '/',
+                                        'PUT',
+                                        'PUT ' + collection,
+                                        (req, res) => {
+                                            this.models.get(collection).updateOne(
+                                                req.body,
+                                                (err: any) => {
+                                                    if (!err) {
+                                                        res.json({ status: 'OK' });
+                                                    } else {
+                                                        res.status(500);
+                                                        res.json({
+                                                            message: 'Could not update ' + collection + '\n' + err 
+                                                        });
+                                                    }
                                                 }
-                                            ),
-                                            new Route(
-                                                '/',
-                                                'PUT',
-                                                'PUT ' + column,
-                                                (req, res) => {
-                                                    res.send('PUT ' + column);
-                                                }
-                                            ),
-                                            new Route(
-                                                '/',
-                                                'DELETE',
-                                                'DELETE ' + column,
-                                                (req, res) => {
-                                                    res.send('DELETE ' + column);
-                                                }
-                                            ),
-                                        )
-                                    )
-                                );
-                            } // Is it over yet ?
+                                            );
+                                        }
+                                    ),
+                                    new Route(
+                                        '/',
+                                        'DELETE',
+                                        'DELETE ' + collection,
+                                        (req, res) => {
+                                            this.models.get(collection).deleteOne(req.body)
+                                                .exec(
+                                                    (err: any) => {
+                                                        if (!err) {
+                                                            res.json({ status: 'OK' });
+                                                        } else {
+                                                            res.status(500);
+                                                            res.json({
+                                                                message: 'Could not delete ' + collection + '\n' + err 
+                                                            });
+                                                        }
+                                                    }
+                                                );
+                                        }
+                                    ),
+                                )
+                            )
                         );
-                    }
+                    } // Is it over yet ?
                 );
-                this.entryPoints = entryPoints;
+            }
+        );
+        this.entryPoints = entryPoints;
     }
 
     /**
