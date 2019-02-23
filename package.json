@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/LegitBaboulinet/blaze.js.git"
+    "url": "git+ssh://git@github.com/LegitBaboulinet/blazeit.js.git"
   },
   "keywords": [
     "blazeit",
@@ -22,9 +22,9 @@
   "author": "LegitBaboulinet",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/LegitBaboulinet/blaze.js/issues"
+    "url": "https://github.com/LegitBaboulinet/blazite.js/issues"
   },
-  "homepage": "https://github.com/LegitBaboulinet/blaze.js#readme",
+  "homepage": "https://github.com/LegitBaboulinet/blazeit.js#readme",
   "devDependencies": {
     "@types/node": "^11.9.4",
     "typescript": "^3.3.3"
