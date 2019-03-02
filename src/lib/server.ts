@@ -1,5 +1,5 @@
-import { Route } from "./classes/route";
-import { EntryPoint } from './classes/entryPoint';
+import {Route} from "./classes/route";
+import {EntryPoint} from './classes/entryPoint';
 
 import * as Express from 'express';
 import * as BodyParser from 'body-parser';

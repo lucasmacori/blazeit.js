@@ -1,4 +1,5 @@
-import { Route } from './route';
+import {Route} from './route';
+
 export class EntryPoint {
 
     constructor(

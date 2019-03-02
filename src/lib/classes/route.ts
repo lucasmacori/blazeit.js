@@ -1,4 +1,3 @@
-import { EntryPoint } from './entryPoint';
 export class Route {
  
     constructor(

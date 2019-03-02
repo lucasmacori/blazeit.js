@@ -1,6 +1,6 @@
-import { Server } from '../lib/server';
-import { EntryPoint } from '../lib/classes/entryPoint';
-import { Route } from '../lib/classes/route';
+import {Server} from '../lib/server';
+import {EntryPoint} from '../lib/classes/entryPoint';
+import {Route} from '../lib/classes/route';
 
 // Creating the server
 const server = new Server(

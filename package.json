@@ -1,11 +1,11 @@
 {
-  "name": "blazeit.js",
+  "name": "blazeit",
   "version": "0.1.0",
   "description": "An extremely quick way to create a CRUD server out a JS object",
   "main": "dist/index.js",
   "scripts": {
-    "start": "dist/index.js",
-    "test": "test.js"
+    "build": "tsc",
+    "start": "dist/index.js"
   },
   "repository": {
     "type": "git",
