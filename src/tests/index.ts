@@ -1,4 +1,4 @@
-import { Blazeit } from '../index';
+import {Blazeit} from '../index';
 
 const blazeit = new Blazeit(
     {
@@ -7,7 +7,7 @@ const blazeit = new Blazeit(
         },
         database: {
             hostname: 'localhost',
-            databaseName: 'test_blazeit',
+            name: 'test_blazeit',
         },
         models: [
             {
