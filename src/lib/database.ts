@@ -42,8 +42,8 @@ export class Database {
         const nameStr: string = (this.name) ? this.name : 'Blazeit';
         Mongoose.connect(
             'mongodb://' +
-            hostnameStr + '/'+
-            portStr +
+            hostnameStr +
+            portStr + '/' +
             nameStr,
             { useNewUrlParser: true }
         );
