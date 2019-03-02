@@ -33,7 +33,7 @@ export class Database {
     }
 
     /**
-     * init()
+     * init
      * Initialize the connection to the database
      */
     private init(): void {

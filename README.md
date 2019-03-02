@@ -15,7 +15,7 @@ npm install blazeit
 # Usage
 Here's how to create a BlazeIt.js instance.
 ``` javascript
-const BlazeIt = require('blazeit');
+const {BlazeIt} = require('blazeit');
 
 const myBlazeItServer = new BlazeIt({
     // Your settings here
@@ -70,7 +70,7 @@ For more information, please visit the [offical Mongoose documentation](https://
 
 Here's an example of a BlazeIt.js server with a list of Employes
 ``` javascript
-const BlazeIt = require('blazeit');
+const {BlazeIt} = require('blazeit');
 
 const myBlazeItServer = new BlazeIt({
     // Your settings here

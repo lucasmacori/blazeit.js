@@ -58,14 +58,30 @@ export class Blazeit {
         }
     }
 
+    /**
+     * createDatabase
+     * Generate the database from the database object
+     */
     private createDatabase(): void {
-        this.database = new Database(
-            this.values.database['hostname'],
-            this.values.database['port'],
-            this.values.database['name']
-        );
+        let hostname: string;
+        let port: number;
+        let name: string;
+        if (this.values.database) {
+            hostname = (this.values.database['hostname']) ? this.values.database['hostname'] : 'localhost';
+            port = (this.values.database['port']) ? this.values.database['port'] : 27017;
+            name = (this.values.database['name']) ? this.values.database['name'] : 'Blazeit';
+        } else {
+            hostname = 'localhost';
+            port = 27017;
+            name = 'Blazeit'
+        }
+        this.database = new Database(hostname, port, name);
     }
 
+    /**
+     * createModels
+     * Generates the models from the models object
+     */
     private createModels(): void {
         this.values.models.forEach(
             (model: any, index) => {
@@ -81,6 +97,10 @@ export class Blazeit {
         );
     }
 
+    /**
+     * createEntryPoints
+     * Generates the entryPoints from the models
+     */
     private createEntryPoints(): void {
         // TODO: Split this in several functions
         // This is NOT okay ! o(>< )o
@@ -130,7 +150,7 @@ export class Blazeit {
                                                     } else {
                                                         res.status(500);
                                                         res.json({
-                                                            message: 'Could not create ' + collection + '\n' + err 
+                                                            message: 'Could not create ' + collection + '\n' + err
                                                         });
                                                     }
                                                 }
@@ -150,7 +170,7 @@ export class Blazeit {
                                                     } else {
                                                         res.status(500);
                                                         res.json({
-                                                            message: 'Could not update ' + collection + '\n' + err 
+                                                            message: 'Could not update ' + collection + '\n' + err
                                                         });
                                                     }
                                                 }
@@ -170,7 +190,7 @@ export class Blazeit {
                                                         } else {
                                                             res.status(500);
                                                             res.json({
-                                                                message: 'Could not delete ' + collection + '\n' + err 
+                                                                message: 'Could not delete ' + collection + '\n' + err
                                                             });
                                                         }
                                                     }
@@ -189,10 +209,15 @@ export class Blazeit {
 
     /**
      * createServer
-     * Create a server with the given parameters and generated entrypoints
+     * Create the server from the server object
      */
     private createServer(): void {
-        const port: number = (this.values.server['port']) ? this.values.server['port'] : 3000;
+        let port: number;
+        if (this.values.server) {
+            port = (this.values.server['port']) ? this.values.server['port'] : 3000;
+        } else {
+            port = 3000;
+        }
         this.server = new Server(port, this.entryPoints);
         this.server.serve();
     }
