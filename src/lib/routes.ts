@@ -1,4 +1,5 @@
 import {Route} from './classes/route';
+import {validateCreate, validateDelete, validateGetById, validateUpdate} from "./validators";
 
 /**
  * generateGet
@@ -6,7 +7,7 @@ import {Route} from './classes/route';
  * @param models: Map<string, any>
  * @param collection: string
  */
-export function generateGet(models: Map<string, any>, collection: string) {
+export function generateGet(models: Map<string, any>, collection: string): Route {
     return new Route(
         '/',
         'GET',
@@ -20,7 +21,7 @@ export function generateGet(models: Map<string, any>, collection: string) {
                         } else {
                             res.status(500);
                             res.json({
-                                message: 'Could not get ' + collection + '\n' + err
+                                message: 'Could not get ' + collection + ': ' + err
                             });
                         }
                     }
@@ -35,25 +36,27 @@ export function generateGet(models: Map<string, any>, collection: string) {
  * @param models: Map<string, any>
  * @param collection: string
  */
-export function generateGetById(models: Map<string, any>, collection: string) {
+export function generateGetById(models: Map<string, any>, collection: string): Route {
     return new Route(
         '/:id',
         'GET',
         'GET ' + collection + ' by id',
         (req, res) => {
-            models.get(collection).findById(req.params.id)
-                .exec(
-                    (err: any, object: any) => {
-                        if (!err) {
-                            res.json(object);
-                        } else {
-                            res.status(500);
-                            res.json({
-                                message: 'Could not get ' + collection + '\n' + err
-                            });
+            if (validateGetById(req, res)) {
+                models.get(collection).findById(req.params.id)
+                    .exec(
+                        (err: any, object: any) => {
+                            if (!err) {
+                                res.json((object) ? object : {});
+                            } else {
+                                res.status(500);
+                                res.json({
+                                    message: 'Could not get ' + collection + ': ' + err
+                                });
+                            }
                         }
-                    }
-                );
+                    );
+            }
         }
     )
 }
@@ -64,25 +67,27 @@ export function generateGetById(models: Map<string, any>, collection: string) {
  * @param models: Map<string, any>
  * @param collection: string
  */
-export function generateCreate(models: Map<string, any>, collection: string) {
+export function generateCreate(models: Map<string, any>, collection: string): Route {
     return new Route(
         '/',
         'POST',
         'POST ' + collection,
         (req, res) => {
-            models.get(collection).create(
-                req.body,
-                (err: any) => {
-                    if (!err) {
-                        res.json({status: 'OK'});
-                    } else {
-                        res.status(500);
-                        res.json({
-                            message: 'Could not create ' + collection + '\n' + err
-                        });
+            if (validateCreate(req, res)) {
+                models.get(collection).create(
+                    req.body,
+                    (err: any) => {
+                        if (!err) {
+                            res.json({status: 'OK'});
+                        } else {
+                            res.status(500);
+                            res.json({
+                                message: 'Could not create ' + collection + ': ' + err
+                            });
+                        }
                     }
-                }
-            );
+                );
+            }
         }
     );
 
@@ -93,7 +98,7 @@ export function generateCreate(models: Map<string, any>, collection: string) {
  * @param models: Map<string, any>
  * @param collection: string
  */
-export function generateSearch(models: Map<string, any>, collection: string) {
+export function generateSearch(models: Map<string, any>, collection: string): Route {
     return new Route(
         '/search',
         'POST',
@@ -107,7 +112,7 @@ export function generateSearch(models: Map<string, any>, collection: string) {
                         } else {
                             res.status(500);
                             res.json({
-                                message: 'Could not search for ' + collection + '\n' + err
+                                message: 'Could not search for ' + collection + ': ' + err
                             });
                         }
                     }
@@ -122,25 +127,28 @@ export function generateSearch(models: Map<string, any>, collection: string) {
  * @param models: Map<string, any>
  * @param collection: string
  */
-export function generateUpdate(models: Map<string, any>, collection: string) {
+export function generateUpdate(models: Map<string, any>, collection: string): Route {
     return new Route(
         '/',
         'PUT',
         'PUT ' + collection,
         (req, res) => {
-            models.get(collection).updateOne(
-                req.body,
-                (err: any) => {
-                    if (!err) {
-                        res.json({status: 'OK'});
-                    } else {
-                        res.status(500);
-                        res.json({
-                            message: 'Could not update ' + collection + '\n' + err
-                        });
+            if (validateUpdate(req, res)) {
+                models.get(collection).updateOne(
+                    {_id: req.body._id},
+                    req.body,
+                    (err: any) => {
+                        if (!err) {
+                            res.json({status: 'OK'});
+                        } else {
+                            res.status(500);
+                            res.json({
+                                message: 'Could not update ' + collection + ': ' + err
+                            });
+                        }
                     }
-                }
-            );
+                );
+            }
         }
     );
 }
@@ -151,25 +159,27 @@ export function generateUpdate(models: Map<string, any>, collection: string) {
  * @param models: Map<string, any>
  * @param collection: string
  */
-export function generateDelete(models: Map<string, any>, collection: string) {
+export function generateDelete(models: Map<string, any>, collection: string): Route {
     return new Route(
         '/',
         'DELETE',
         'DELETE ' + collection,
         (req, res) => {
-            models.get(collection).deleteOne(req.body)
-                .exec(
-                    (err: any) => {
-                        if (!err) {
-                            res.json({status: 'OK'});
-                        } else {
-                            res.status(500);
-                            res.json({
-                                message: 'Could not delete ' + collection + '\n' + err
-                            });
+            if (validateDelete(req, res)) {
+                models.get(collection).deleteOne({_id: req.body._id})
+                    .exec(
+                        (err: any) => {
+                            if (!err) {
+                                res.json({status: 'OK'});
+                            } else {
+                                res.status(500);
+                                res.json({
+                                    message: 'Could not delete ' + collection + ': ' + err
+                                });
+                            }
                         }
-                    }
-                );
+                    );
+            }
         }
     )
 }
