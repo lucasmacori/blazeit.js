@@ -1,15 +1,19 @@
 import {Blazeit} from '../index';
+import Mongoose = require('mongoose');
+
+const Schema = Mongoose.Schema;
 
 const blazeit = new Blazeit(
     {
         models: [
             {
-                person: {
+                employe: {
                     firstName: String,
-                    lastName: String,
-                    birthDay: Date,
-                    isMarried: Boolean,
-                    numberOfChildren: Number
+                    lastName: String
+                },
+                sector: {
+                    name: String,
+                    manager: {type: Schema.Types.ObjectId, ref: 'employe'}
                 }
             }
         ]

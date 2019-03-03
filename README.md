@@ -77,7 +77,7 @@ const myBlazeItServer = new BlazeIt({
     // Report to the documentation
     database: {
         hostname: 'localhost',
-        name: 'test_blazeit',
+        name: 'MaCompanyAPI',
     },
     models: [
         {
@@ -86,7 +86,12 @@ const myBlazeItServer = new BlazeIt({
                 lastName: String,
                 email: String,
                 phone: String,
-                jobDescription: String
+                jobDescription: String,
+                sector: [{ Schema.Types.ObjectId, ref: 'sector' }]
+            },
+            sector: {
+                name: String,
+                manager: { Schema.Types.ObjectId, ref: 'employe' }
             }
         }
     ]
