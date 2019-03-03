@@ -4,6 +4,14 @@ import {Database} from './lib/database';
 import {Route} from './lib/classes/route';
 
 import * as Mongoose from 'mongoose';
+import {
+    generateCreate,
+    generateDelete,
+    generateGet,
+    generateGetById,
+    generateSearch,
+    generateUpdate
+} from "./lib/routes";
 
 export class Blazeit {
 
@@ -117,90 +125,16 @@ export class Blazeit {
                             new EntryPoint(
                                 '/' + collection,
                                 new Array<Route>(
-                                    new Route(
-                                        '/',
-                                        'GET',
-                                        'GET ' + collection,
-                                        (req, res) => {
-                                            this.models.get(collection).find({})
-                                                .exec(
-                                                    (err: any, objects: Array<any>) => {
-                                                        if (!err) {
-                                                            res.json(objects);
-                                                        } else {
-                                                            res.status(500);
-                                                            res.json({
-                                                                message: 'Could not get ' + collection + '\n' + err
-                                                            });
-                                                        }
-                                                    }
-                                                );
-                                        }
-                                    ),
-                                    new Route(
-                                        '/',
-                                        'POST',
-                                        'POST ' + collection,
-                                        (req, res) => {
-                                            this.models.get(collection).create(
-                                                req.body,
-                                                (err: any) => {
-                                                    if (!err) {
-                                                        res.json({ status: 'OK' });
-                                                    } else {
-                                                        res.status(500);
-                                                        res.json({
-                                                            message: 'Could not create ' + collection + '\n' + err
-                                                        });
-                                                    }
-                                                }
-                                            );
-                                        }
-                                    ),
-                                    new Route(
-                                        '/',
-                                        'PUT',
-                                        'PUT ' + collection,
-                                        (req, res) => {
-                                            this.models.get(collection).updateOne(
-                                                req.body,
-                                                (err: any) => {
-                                                    if (!err) {
-                                                        res.json({ status: 'OK' });
-                                                    } else {
-                                                        res.status(500);
-                                                        res.json({
-                                                            message: 'Could not update ' + collection + '\n' + err
-                                                        });
-                                                    }
-                                                }
-                                            );
-                                        }
-                                    ),
-                                    new Route(
-                                        '/',
-                                        'DELETE',
-                                        'DELETE ' + collection,
-                                        (req, res) => {
-                                            this.models.get(collection).deleteOne(req.body)
-                                                .exec(
-                                                    (err: any) => {
-                                                        if (!err) {
-                                                            res.json({ status: 'OK' });
-                                                        } else {
-                                                            res.status(500);
-                                                            res.json({
-                                                                message: 'Could not delete ' + collection + '\n' + err
-                                                            });
-                                                        }
-                                                    }
-                                                );
-                                        }
-                                    ),
+                                    generateGet(this.models, collection),
+                                    generateGetById(this.models, collection),
+                                    generateCreate(this.models, collection),
+                                    generateSearch(this.models, collection),
+                                    generateUpdate(this.models, collection),
+                                    generateDelete(this.models, collection),
                                 )
                             )
                         );
-                    } // Is it over yet ?
+                    }
                 );
             }
         );
