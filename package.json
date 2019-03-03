@@ -1,6 +1,6 @@
 {
   "name": "blazeit",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "An extremely quick way to create a CRUD server out a JS object",
   "main": "dist/index.js",
   "scripts": {
