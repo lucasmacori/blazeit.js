@@ -91,18 +91,19 @@ export class Blazeit {
      * Generates the models from the models object
      */
     private createModels(): void {
-        this.values.models.forEach(
-            (model: any, index) => {
-                const collections: Array<string> = Object.keys(model);
+        console.log(this.values.models);
+        const collections: Array<string> = Object.keys(this.values.models[0]);
+        collections.forEach(
+            (collection: string) => {
                 this.models.set(
-                    collections[index],
+                    collection,
                     Mongoose.model(
-                        collections[index],
-                        new Mongoose.Schema(model[collections[index]])
+                        collection,
+                        new Mongoose.Schema(this.values.models[0][collection])
                     )
                 );
             }
-        );
+        )
     }
 
     /**
@@ -114,27 +115,23 @@ export class Blazeit {
         // This is NOT okay ! o(>< )o
         const entryPoints: Array<EntryPoint> = new Array<EntryPoint>();
 
-        this.values.models.forEach(
-            (model: any) => {
-                // Getting the name of the collections of the model
-                const collections: Array<string> = Object.keys(model);
+        // Getting the name of the collections of the model
+        const collections: Array<string> = Object.keys(this.values.models[0]);
 
-                collections.forEach(
-                    (collection: string) => {
-                        entryPoints.push(
-                            new EntryPoint(
-                                '/' + collection,
-                                new Array<Route>(
-                                    generateGet(this.models, collection),
-                                    generateGetById(this.models, collection),
-                                    generateCreate(this.models, collection),
-                                    generateSearch(this.models, collection),
-                                    generateUpdate(this.models, collection),
-                                    generateDelete(this.models, collection),
-                                )
-                            )
-                        );
-                    }
+        collections.forEach(
+            (collection: string) => {
+                entryPoints.push(
+                    new EntryPoint(
+                        '/' + collection,
+                        new Array<Route>(
+                            generateGet(this.models, collection),
+                            generateGetById(this.models, collection),
+                            generateCreate(this.models, collection),
+                            generateSearch(this.models, collection),
+                            generateUpdate(this.models, collection),
+                            generateDelete(this.models, collection),
+                        )
+                    )
                 );
             }
         );
