@@ -92,14 +92,14 @@ export class Blazeit {
      */
     private createModels(): void {
         console.log(this.values.models);
-        const collections: Array<string> = Object.keys(this.values.models[0]);
+        const collections: Array<string> = Object.keys(this.values.models);
         collections.forEach(
             (collection: string) => {
                 this.models.set(
                     collection,
                     Mongoose.model(
                         collection,
-                        new Mongoose.Schema(this.values.models[0][collection])
+                        new Mongoose.Schema(this.values.models[collection])
                     )
                 );
             }
@@ -116,7 +116,7 @@ export class Blazeit {
         const entryPoints: Array<EntryPoint> = new Array<EntryPoint>();
 
         // Getting the name of the collections of the model
-        const collections: Array<string> = Object.keys(this.values.models[0]);
+        const collections: Array<string> = Object.keys(this.values.models);
 
         collections.forEach(
             (collection: string) => {

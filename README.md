@@ -24,17 +24,15 @@ const myBlazeItServer = new BlazeIt({
         hostname: 'localhost',
         name: 'test_blazeit',
     },
-    models: [
-        {
-            person: {
-                firstName: String,
-                lastName: String,
-                birthDay: Date,
-                isMarried: Boolean,
-                numberOfChildren: Number
-            }
+    models: {
+        person: {
+            firstName: String,
+            lastName: String,
+            birthDay: Date,
+            isMarried: Boolean,
+            numberOfChildren: Number
         }
-    ]
+    }
 });
 ```
 
@@ -71,6 +69,8 @@ For more information, please visit the [offical Mongoose documentation](https://
 Here's an example of a BlazeIt.js server with a list of Employes
 ``` javascript
 const {BlazeIt} = require('blazeit');
+const Mongoose = require('mongoose');
+const Schema = Mongoose.Schema;
 
 const myBlazeItServer = new BlazeIt({
     // Your settings here
@@ -79,22 +79,20 @@ const myBlazeItServer = new BlazeIt({
         hostname: 'localhost',
         name: 'MaCompanyAPI',
     },
-    models: [
-        {
-            employe: {
-                firstName: String,
-                lastName: String,
-                email: String,
-                phone: String,
-                jobDescription: String,
-                sector: [{ Schema.Types.ObjectId, ref: 'sector' }]
-            },
-            sector: {
-                name: String,
-                manager: { Schema.Types.ObjectId, ref: 'employe' }
-            }
+    models: {
+        employe: {
+            firstName: String,
+            lastName: String,
+            email: String,
+            phone: String,
+            jobDescription: String,
+            sector: [{ Schema.Types.ObjectId, ref: 'sector' }]
+        },
+        sector: {
+            name: String,
+            manager: { Schema.Types.ObjectId, ref: 'employe' }
         }
-    ]
+    }
 });
 ```
 
