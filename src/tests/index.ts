@@ -1,7 +1,4 @@
 import {Blazeit} from '../index';
-import Mongoose = require('mongoose');
-
-const Schema = Mongoose.Schema;
 
 const blazeit = new Blazeit(
     {
@@ -12,7 +9,7 @@ const blazeit = new Blazeit(
             },
             sector: {
                 name: String,
-                manager: {type: Schema.Types.ObjectId, ref: 'employe'}
+                manager: 'employe'
             }
         }
     }

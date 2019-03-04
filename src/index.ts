@@ -45,6 +45,7 @@ export class Blazeit {
      */
     constructor(private values: any) {
         this.checkValues();
+        this.replaceBlazeSyntax();
         this.createDatabase();
         this.createModels();
         this.createEntryPoints();
@@ -64,6 +65,30 @@ export class Blazeit {
         } else {
             throw 'You must pass at least one model, none was given';
         }
+    }
+
+    /**
+     * replaceBlazeSyntax
+     * Replaces all the blaze syntax in the object by the real syntax understood by the ODM / ORM
+     */
+    private replaceBlazeSyntax(): void {
+        const collections: Array<string> = Object.keys(this.values.models);
+        collections.forEach(
+            (collection: string) => {
+                const values: Array<string> = Object.keys(this.values.models[collection]);
+                values.forEach(
+                    (param: string) => {
+                        let value = this.values.models[collection][param];
+                        if (typeof value === 'string') {
+                            if (collections.indexOf(value) === -1) {
+                                throw 'The \'' + value + '\' model does not exist. Please check the syntax';
+                            }
+                            this.values.models[collection][param] = { type: Mongoose.Schema.Types.ObjectId, ref: value };
+                        }
+                    }
+                )
+            }
+        )
     }
 
     /**
@@ -91,7 +116,6 @@ export class Blazeit {
      * Generates the models from the models object
      */
     private createModels(): void {
-        console.log(this.values.models);
         const collections: Array<string> = Object.keys(this.values.models);
         collections.forEach(
             (collection: string) => {

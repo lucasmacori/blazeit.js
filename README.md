@@ -60,7 +60,8 @@ Here's a list of those types:
 - Decimal128
 - Map
 
-You can also use SchemaType options and everything Mongoose has to offer.
+You can also create associations by defining the type as 'NAME_OF_ASSOCIATION'.\
+Look below to see an example.
 
 For more information, please visit the [offical Mongoose documentation](https://mongoosejs.com/docs/schematypes.html).
 
@@ -69,8 +70,6 @@ For more information, please visit the [offical Mongoose documentation](https://
 Here's an example of a BlazeIt.js server with a list of Employes
 ``` javascript
 const {Blazeit} = require('blazeit');
-const Mongoose = require('mongoose');
-const Schema = Mongoose.Schema;
 
 const myBlazeItServer = new Blazeit({
     // Your settings here
@@ -90,11 +89,11 @@ const myBlazeItServer = new Blazeit({
             email: String,
             phone: String,
             jobDescription: String,
-            sector: [{ type: Schema.Types.ObjectId, ref: 'sector' }]
+            sector: 'sector'
         },
         sector: {
             name: String,
-            manager: { type: Schema.Types.ObjectId, ref: 'employe' }
+            manager: 'employe'
         }
     }
 });
