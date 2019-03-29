@@ -41,6 +41,8 @@ When calling BlazeIt.js, you have to pass it arguments.
 Here are the possibilities:
 - server
     - port (default is 3000)
+    - express (an existing express instance. If not given, BlazeIt will generate one)
+    - bodyType (default is 'json', you can use 'json' or 'form')
 - database
     - hostname (default is localhost)
     - port (default is mongoDB's default: 27017)
@@ -67,7 +69,7 @@ For more information, please visit the [offical Mongoose documentation](https://
 
 **Example**
 
-Here's an example of a BlazeIt.js server with a list of Employes
+Here's an example of a BlazeIt.js server with a list of Employees
 ``` javascript
 const {Blazeit} = require('blazeit');
 
@@ -83,7 +85,7 @@ const myBlazeItServer = new Blazeit({
         name: 'MyCompanyAPI',
     },
     models: {
-        employe: {
+        employee: {
             firstName: String,
             lastName: String,
             email: String,
@@ -93,11 +95,24 @@ const myBlazeItServer = new Blazeit({
         },
         sector: {
             name: String,
-            manager: 'employe'
+            manager: 'employee'
         }
     }
 });
 ```
+
+In this example, the following routes will be generated:
+- GET       localhost:3000/employee         : Gets all the employees
+- GET       localhost:3000/employee/:id     : Gets the employee with the given id
+- POST      localhost:3000/employee         : Adds a new employee
+- PUT       localhost:3000/employee         : Edits an existing employee
+- DELETE    localhost:3000/employee         : Deleting an existing employee
+
+- GET       localhost:3000/sector           : Gets all the sectors
+- GET       localhost:3000/sector/:id       : Gets the sector with the given id
+- POST      localhost:3000/sector           : Adds a new sector
+- PUT       localhost:3000/sector           : Edits an existing sector
+- DELETE    localhost:3000/sector           : Deleting an existing sector
 
 # Information
 BlazeIt.js is free of charge and can be modified and shared freely.

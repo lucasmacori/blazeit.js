@@ -10,7 +10,9 @@ export class Server {
 
     constructor(
         private _port: number,
-        private _entryPoints: Array<EntryPoint>
+        private _entryPoints: Array<EntryPoint>,
+        private _bodyType: string,
+        private _server = undefined
     ) {
         this.init();
     }
@@ -30,14 +32,38 @@ export class Server {
         this._entryPoints = value;
     }
 
+    get bodyType(): string {
+        return this._bodyType;
+    }
+
+    set bodyType(value: string) {
+        this._bodyType = value;
+    }
+
+    get server(): any {
+        return this._server;
+    }
+
+    set server(value: any) {
+        this._server = value;
+    }
+
     /**
-     * init
-     * Initialize the server
+     * serve
+     * Starts the server on the given port
      */
-    private init(): void {
-        this.app = new Express();
-        this.app.use(BodyParser.json());
-        this.initRoutes();
+    public serve(): void {
+        const portStr: number = (this.port) ? this.port : 3000;
+        this.app.listen(
+            portStr,
+            (err: any) => {
+                if (!err) {
+                    console.log('Server is listening on port ' + portStr);
+                } else {
+                    throw err;
+                }
+            }
+        );
     }
 
     /**
@@ -117,20 +143,20 @@ export class Server {
     }
 
     /**
-     * serve
-     * Starts the server on the given port
+     * init
+     * Initialize the server
      */
-    public serve(): void {
-        const portStr: number = (this.port) ? this.port : 3000;
-        this.app.listen(
-            this.port,
-            (err: any) => {
-                if (!err) {
-                   console.log('Server is listening on port ' + this.port);
-                } else {
-                    throw err;
-                }
-            }
-        );
+    private init(): void {
+        if (this.server) {
+            this.app = this.server;
+        } else {
+            this.app = new Express();
+        }
+        if (this.bodyType.toLowerCase() === 'json') {
+            this.app.use(BodyParser.json());
+        } else {
+            this.app.use(BodyParser.urlencoded({extended: false}))
+        }
+        this.initRoutes();
     }
 }

@@ -5,8 +5,7 @@ import {Route} from '../lib/classes/route';
 // Creating the server
 const server = new Server(
     3000,
-    new Array(
-        new EntryPoint(
+    [new EntryPoint(
             '/person',
             new Array<Route>(
                 new Route(
@@ -57,8 +56,8 @@ const server = new Server(
                     }
                 )
             )
-        )
-    )
+        )],
+    'json'
 );
 
 // Starting the server

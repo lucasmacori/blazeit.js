@@ -19,6 +19,7 @@ export class Blazeit {
     private entryPoints: Array<EntryPoint>;
     private database: Database;
     private models: Map<string, any> = new Map<string, any>();
+    private bodyType: string = 'JSON';
 
     /**
      * @param values : the object that contains everything Blazeit needs or does not
@@ -26,6 +27,7 @@ export class Blazeit {
      * {
      *      server: {
      *          port: YOUR_SERVER_PORT, // Default is 3000
+     *          express: yourExpressInstance
      *      },
      *      database: {
      *          hostname: 'YOUR_HOSTNAME', // 'localhost' if not given
@@ -49,6 +51,7 @@ export class Blazeit {
         this.createDatabase();
         this.createModels();
         this.createEntryPoints();
+        this.executeBlazeCommands();
         this.createServer();
     }
 
@@ -89,6 +92,24 @@ export class Blazeit {
                 )
             }
         )
+    }
+
+    /**
+     * executeBlazeCommands
+     * Executes the blaze commands given in the object (The body type for example 'JSON' or 'form')
+     */
+    private executeBlazeCommands(): void {
+        if (this.values.server) {
+            if (this.values.server.bodyType) {
+                if (this.values.server.bodyType.toLowerCase() === 'json') {
+                    this.bodyType = 'json';
+                } else if (this.values.server.bodyType.toLowerCase() === 'form') {
+                    this.bodyType = 'form';
+                } else {
+                    throw this.values.server.bodyType.toLowerCase() + ' is not a valid body type. Use either "json" or "form"';
+                }
+            }
+        }
     }
 
     /**
@@ -173,7 +194,14 @@ export class Blazeit {
         } else {
             port = 3000;
         }
-        this.server = new Server(port, this.entryPoints);
-        this.server.serve();
+        this.server = new Server(
+            port,
+            this.entryPoints,
+            this.bodyType,
+            (this.values.server.express) ? this.values.server.express : undefined
+        );
+        if (this.values.server.express) {
+            this.server.serve();
+        }
     }
 }
