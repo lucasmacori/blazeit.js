@@ -189,7 +189,11 @@ export class Blazeit {
      */
     private createServer(): void {
         let port: number;
+        let server: any;
         if (this.values.server) {
+            if (this.values.server.express) {
+                server = this.values.server.express;
+            }
             port = (this.values.server['port']) ? this.values.server['port'] : 3000;
         } else {
             port = 3000;
@@ -198,10 +202,8 @@ export class Blazeit {
             port,
             this.entryPoints,
             this.bodyType,
-            (this.values.server.express) ? this.values.server.express : undefined
+            server
         );
-        if (this.values.server.express) {
-            this.server.serve();
-        }
+        this.server.serve();
     }
 }
