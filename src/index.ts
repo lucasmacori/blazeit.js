@@ -117,19 +117,24 @@ export class Blazeit {
      * Generate the database from the database object
      */
     private createDatabase(): void {
-        let hostname: string;
-        let port: number;
-        let name: string;
+        let type: string = 'mongodb';
+        let hostname: string = 'localhost';
+        let port: number = 27017;
+        let name: string = 'Blazeit';
+        let username: string;
+        let password: string;
         if (this.values.database) {
-            hostname = (this.values.database['hostname']) ? this.values.database['hostname'] : 'localhost';
-            port = (this.values.database['port']) ? this.values.database['port'] : 27017;
-            name = (this.values.database['name']) ? this.values.database['name'] : 'Blazeit';
-        } else {
-            hostname = 'localhost';
-            port = 27017;
-            name = 'Blazeit'
+            type = (this.values.database['type']) ? this.values.database['type'] : 'mongodb';
+            hostname = (this.values.database['hostname']) ? this.values.database['hostname'] : undefined;
+            port = (this.values.database['port']) ? this.values.database['port'] : undefined;
+            name = (this.values.database['name']) ? this.values.database['name'] : undefined;
+            username = (this.values.database['username']) ? this.values.database['username'] : undefined;
+            password = (this.values.database['password']) ? this.values.database['password'] : undefined;
+            if (type != 'sqlite') {
+                hostname = (this.values.database['hostname']) ? this.values.database['hostname'] : 'localhost';
+            }
         }
-        this.database = new Database(hostname, port, name);
+        this.database = new Database(hostname, name, type, port, username, password);
     }
 
     /**
@@ -140,6 +145,7 @@ export class Blazeit {
         const collections: Array<string> = Object.keys(this.values.models);
         collections.forEach(
             (collection: string) => {
+                // TODO: Convert the given models into model classes and then convert into mongoose or sequelize models
                 this.models.set(
                     collection,
                     Mongoose.model(

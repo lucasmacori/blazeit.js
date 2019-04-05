@@ -10,6 +10,10 @@ const blazeit = new Blazeit(
             express: app,
             bodyType: "json"
         },
+        database: {
+            type: 'sqlite',
+            name: 'db.sqlite'
+        },
         models: {
             employe: {
                 firstName: String,
