@@ -162,8 +162,6 @@ export class Blazeit {
      * Generates the entryPoints from the models
      */
     private createEntryPoints(): void {
-        // TODO: Split this in several functions
-        // This is NOT okay ! o(>< )o
         const entryPoints: Array<EntryPoint> = new Array<EntryPoint>();
 
         // Getting the name of the collections of the model

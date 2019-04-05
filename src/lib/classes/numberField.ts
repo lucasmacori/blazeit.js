@@ -1,7 +1,7 @@
 import {Field} from "./field";
 
 export enum NumberSQLTypes {
-    INT, DOUBLE, FLOAT, NUMERIC
+    INT, BIGINT, DOUBLE, FLOAT, DECIMAL
 }
 
 export class NumberField extends Field {
@@ -13,6 +13,6 @@ export class NumberField extends Field {
         private _min: number = undefined,
         private _sqlType: NumberSQLTypes = NumberSQLTypes.INT
     ) {
-        super(_name, 'string', _required, _isPrimaryKey);
+        super(_name, _required, _isPrimaryKey);
     }
 }

@@ -17,7 +17,7 @@ export class stringField extends Field {
         private _isUrl: boolean = false,
         private _isIn: Array<string> = []
     ) {
-        super(_name, 'string', _required, _isPrimaryKey);
+        super(_name, _required, _isPrimaryKey);
     }
 
 
