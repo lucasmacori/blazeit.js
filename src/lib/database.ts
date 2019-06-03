@@ -1,5 +1,6 @@
 import * as Mongoose from 'mongoose';
 import * as Sequelize from 'sequelize';
+import { Model } from './classes/model';
 
 export class Database {
 
@@ -9,12 +10,14 @@ export class Database {
         private _type: string = undefined,
         private _port: number = undefined,
         private _username: string = undefined,
-        private _password: string = undefined
+        private _password: string = undefined,
+        private _logging: boolean = true
     ) {
         this.init();
     }
 
     private _connection: any;
+    private _models: Map<string, any> = new Map<string, any>();
 
     // Getters and setters
     public get hostname(): string {
@@ -23,6 +26,10 @@ export class Database {
 
     public get connection(): any {
         return this._connection;
+    }
+
+    public get models(): any {
+        return this._models;
     }
 
     public get name(): string {
@@ -45,6 +52,14 @@ export class Database {
         return this._password;
     }
 
+    public get logging(): boolean {
+        return this._logging;
+    }
+
+    public set logging(logging: boolean) {
+        this._logging = logging;
+    }
+
     /**
      * init
      * Initialize the connection to the database
@@ -63,12 +78,14 @@ export class Database {
                 nameStr,
                 {useNewUrlParser: true}
             );
+            Mongoose.set('debug', this._logging);
         } else if (this._type === 'mysql' || this._type === 'mariadb' || this._type === 'postgres' || this._type === 'mssql') {
             if (this._username && this._name) {
                 // @ts-ignore
                 this._connection = new Sequelize(this._name, this._username, passwordStr, {
                     host: hostnameStr,
-                    dialect: this._type
+                    dialect: this._type,
+                    logging: this._logging
                 });
             } else {
                 throw 'When using mysql, mariadb, postgres or mssql. You must provide a database name and an username';
@@ -78,7 +95,8 @@ export class Database {
                 // @ts-ignore
                 this._connection = new Sequelize({
                     storage: this._name,
-                    dialect: this._type
+                    dialect: this._type,
+                    logging: this._logging
                 });
             } else {
                 console.log(this._name);
@@ -86,6 +104,28 @@ export class Database {
             }
         } else {
             throw 'This type of database is unknown or not supported. Please use one from this list: mongodb, mariadb, mysql, postgres, mssql, sqlite';
+        }
+    }
+
+    public addModel(model: Model) {
+        if (this._type === 'mongodb') {
+            this.models.set(
+                model.name,
+                Mongoose.model(
+                    model.name,
+                    new Mongoose.Schema(model.getSequelizeDefinition())
+                )
+            );
+        } else {
+            const sModel =  this._connection.define(
+                model.name,
+                model.getSequelizeDefinition()
+            );
+            sModel.sync();
+            this.models.set(
+                model.name,
+                sModel
+            );
         }
     }
 }

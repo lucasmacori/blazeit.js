@@ -22,15 +22,16 @@ const myBlazeItServer = new Blazeit({
     // Report to the documentation
     database: {
         hostname: 'localhost',
-        name: 'test_blazeit',
+        type: 'sqlite'
+        name: 'test_blazeit.sqlite',
     },
     models: {
         person: {
-            firstName: String,
-            lastName: String,
-            birthDay: Date,
-            isMarried: Boolean,
-            numberOfChildren: Number
+            firstName: { type: 'string', isRequired: true },
+            lastName: { type: 'string', isRequired: true },
+            birthDay: { type: 'date' },
+            isMarried: { type: 'boolean' },
+            numberOfChildren: { type: 'number' }
         }
     }
 });
@@ -45,27 +46,22 @@ Here are the possibilities:
     - bodyType (default is 'json', you can use 'json' or 'form')
 - database
     - hostname (default is localhost)
-    - port (default is mongoDB's default: 27017)
+    - port (default is the database default, '27017' for mongoDB for example)
     - name (default is 'Blazeit')
+    - username
+    - password
 - models
+- logging (default is 'true')
 
 BlazeIt.js relies on Mongoose's data types, you can use any of the available types.
 Here's a list of those types:
 - String
 - Number
 - Date
-- Buffer
 - Boolean
-- Mixed
-- ObjectId
-- Array
-- Decimal128
-- Map
 
 You can also create associations by defining the type as 'NAME_OF_ASSOCIATION'.\
 Look below to see an example.
-
-For more information, please visit the [offical Mongoose documentation](https://mongoosejs.com/docs/schematypes.html).
 
 **Example**
 
@@ -81,21 +77,22 @@ const myBlazeItServer = new Blazeit({
     },
     database: {
         hostname: 'localhost',
-        port: 27017,
+        type: 'postgres'
         name: 'MyCompanyAPI',
+        hostname: 'localhost',
+        username: 'postgres',
+        password: ''
     },
     models: {
         employee: {
-            firstName: String,
-            lastName: String,
-            email: String,
-            phone: String,
-            jobDescription: String,
-            sector: 'sector'
+            firstName: { type: 'string', isRequired: true },
+            lastName: { type: 'string', isRequired: true },
+            email: { type: 'string' }, // isRequired is false by default
+            phone: { type: 'string' },
+            jobDescription: { type: 'string' }
         },
         sector: {
-            name: String,
-            manager: 'employee'
+            name: String
         }
     }
 });
@@ -113,6 +110,17 @@ In this example, the following routes will be generated:
 - POST      localhost:3000/sector           : Adds a new sector
 - PUT       localhost:3000/sector           : Edits an existing sector
 - DELETE    localhost:3000/sector           : Deleting an existing sector
+
+# Roadmap
+**v1.0.0** stable
+- Default values
+- Unique values
+- Associations / relationships
+- Authentification (OAuth, token generation, usernames and passwords)
+- Generate random data
+- Manual Express routes
+- CORS support
+- Swagger implementation
 
 # Information
 BlazeIt.js is free of charge and can be modified and shared freely.

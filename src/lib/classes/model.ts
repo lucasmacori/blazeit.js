@@ -1,4 +1,5 @@
 import {Field} from "./field";
+import * as Mongoose from 'mongoose';
 
 export class Model {
     constructor(
@@ -21,5 +22,25 @@ export class Model {
 
     set fields(value: Array<Field>) {
         this._fields = value;
+    }
+
+    getMongooseDefinition(): object {
+        const definition = { id: Mongoose.Schema.Types.ObjectId };
+        this._fields.forEach(
+            (field: Field) => {
+                definition[field.fieldName] = field.translateForMongoose();
+            }
+        );
+        return definition;
+    }
+
+    getSequelizeDefinition(): object {
+        const definition = {};
+        this._fields.forEach(
+            (field: Field) => {
+                definition[field.fieldName] = field.translateForSequelize();
+            }
+        );
+        return definition;
     }
 }

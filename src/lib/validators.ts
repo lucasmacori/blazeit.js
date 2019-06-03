@@ -18,7 +18,7 @@ export function validateBody(req: any, res: any): boolean {
 export function validateGetById(req: any, res: any): boolean {
     if (!req.params.id) {
         res.status(400);
-        res.json({message: 'No \'_id\' was provided'});
+        res.json({message: 'No \'id\' was provided'});
         return false;
     } else {
         return true;
@@ -34,9 +34,9 @@ export function validateGetById(req: any, res: any): boolean {
  */
 export function validateCreate(req: any, res: any): boolean {
     if (validateBody(req, res)) {
-        if (req.body._id) {
+        if (req.body.id) {
             res.status(400);
-            res.json({message: 'No \'_id\' can be provided when creating a new row'});
+            res.json({message: 'No \'id\' can be provided when creating a new row'});
             return false;
         } else {
             return true;
@@ -53,9 +53,9 @@ export function validateCreate(req: any, res: any): boolean {
  */
 export function validateUpdate(req: any, res: any): boolean {
     if (validateBody(req, res)) {
-        if (!req.body._id) {
+        if (!req.body.id) {
             res.status(400);
-            res.json({message: 'No \'_id\' was provided when updating a row'});
+            res.json({message: 'No \'id\' was provided when updating a row'});
             return false;
         } else {
             return true;
@@ -72,9 +72,9 @@ export function validateUpdate(req: any, res: any): boolean {
  */
 export function validateDelete(req: any, res: any): boolean {
     if (validateBody(req, res)) {
-        if (!req.body._id) {
+        if (!req.body.id) {
             res.status(400);
-            res.json({message: 'No \'_id\' was provided when deleting a row'});
+            res.json({message: 'No \'id\' was provided when deleting a row'});
             return false;
         } else {
             return true;

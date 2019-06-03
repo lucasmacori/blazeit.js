@@ -1,4 +1,7 @@
-export class Field {
+import { IField } from "../interfaces/field";
+
+export class Field implements IField {
+    
     constructor(
         private _fieldName: string,
         private _fieldRequired: boolean = false,
@@ -25,5 +28,13 @@ export class Field {
     }
     set fieldIsPrimaryKey(value: boolean) {
         this._fieldIsPrimaryKey = value;
+    }
+    
+    translateForMongoose(): object {
+        throw new Error("Method not implemented.");
+    }
+    
+    translateForSequelize(): object {
+        throw new Error("Method not implemented.");
     }
 }

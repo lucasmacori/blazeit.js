@@ -6,22 +6,23 @@ const app = new Express();
 const blazeit = new Blazeit(
     {
         server: {
-            port: 3001,
+            port: 3002,
             express: app,
-            bodyType: "json"
+            bodyType: 'json'
         },
         database: {
             type: 'sqlite',
-            name: 'db.sqlite'
+            name: 'db.sqlite',
         },
         models: {
             employe: {
-                firstName: String,
-                lastName: String
+                firstName: { type: 'string' },
+                lastName: { type: 'string' },
+                married: { type: 'boolean' }
             },
             sector: {
-                name: String,
-                manager: 'employe'
+                name: { type: 'string' },
+                creationDate: { type: 'date' }
             }
         }
     }

@@ -1,7 +1,7 @@
 import {Field} from "./field";
-import { BOOLEAN } from "sequelize";
+import { DATE } from "sequelize";
 
-export class BooleanField extends Field {
+export class DateField extends Field {
     constructor(
         private _name: string,
         private _required: boolean = false,
@@ -11,10 +11,10 @@ export class BooleanField extends Field {
     }
 
     translateForMongoose(): object {
-        return { type: Boolean, required: this.fieldRequired };
+        return { type: Date, required: this.fieldRequired };
     }
 
     translateForSequelize(): object {
-        return { type: BOOLEAN, allowNull: !this.fieldRequired, primaryKey: this.fieldIsPrimaryKey };
+        return { type: DATE, allowNull: !this.fieldRequired, primaryKey: this.fieldIsPrimaryKey };
     }
 }

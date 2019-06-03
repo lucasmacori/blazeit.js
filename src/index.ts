@@ -12,13 +12,18 @@ import {
     generateSearch,
     generateUpdate
 } from "./lib/routes";
+import { Model } from './lib/classes/model';
+import { Field } from './lib/classes/field';
+import { BooleanField } from './lib/classes/booleanField';
+import { DateField } from './lib/classes/dateField';
+import { NumberField } from './lib/classes/numberField';
+import { StringField } from './lib/classes/stringField';
 
 export class Blazeit {
 
     private server: Server;
     private entryPoints: Array<EntryPoint>;
     private database: Database;
-    private models: Map<string, any> = new Map<string, any>();
     private bodyType: string = 'JSON';
 
     /**
@@ -74,6 +79,7 @@ export class Blazeit {
      * replaceBlazeSyntax
      * Replaces all the blaze syntax in the object by the real syntax understood by the ODM / ORM
      */
+    // TODO: Implement the new version for this
     private replaceBlazeSyntax(): void {
         const collections: Array<string> = Object.keys(this.values.models);
         collections.forEach(
@@ -134,7 +140,7 @@ export class Blazeit {
                 hostname = (this.values.database['hostname']) ? this.values.database['hostname'] : 'localhost';
             }
         }
-        this.database = new Database(hostname, name, type, port, username, password);
+        this.database = new Database(hostname, name, type, port, username, password, this.values.logging);
     }
 
     /**
@@ -145,16 +151,52 @@ export class Blazeit {
         const collections: Array<string> = Object.keys(this.values.models);
         collections.forEach(
             (collection: string) => {
-                // TODO: Convert the given models into model classes and then convert into mongoose or sequelize models
-                this.models.set(
+                const value = this.translateBlazeModel(
                     collection,
-                    Mongoose.model(
-                        collection,
-                        new Mongoose.Schema(this.values.models[collection])
-                    )
+                    this.values.models[collection]
                 );
+                this.database.addModel(value);
             }
-        )
+        );
+    }
+
+    /**
+     * translateBlazeModel
+     * Create the Model object that represents the given object
+     * @param name The name of the model
+     * @param model The model object
+     */
+    private translateBlazeModel(name: string, model: any): Model {
+        const fields = new Array<Field>();
+        const attributes: Array<string> = Object.keys(model);
+
+        // Iterating through the models
+        attributes.forEach(
+            (attribute: string) => {
+                const value = model[attribute];
+
+                // Creating the objects
+                if (value.type) {
+                    switch (value.type.trim().toLowerCase()) {
+                        case 'boolean':
+                            fields.push(new BooleanField(attribute, value.isRequired, value.isPrimaryKey));
+                            break;
+                        case 'date':
+                            fields.push(new DateField(attribute, value.isRequired, value.isPrimaryKey));
+                            break;
+                        case 'number':
+                            fields.push(new NumberField(attribute, value.isRequired, value.isPrimaryKey, value.max, value.min, value.sqlType));
+                            break;
+                        case 'string':
+                            fields.push(new StringField(attribute, value.isRequired, value.isPrimaryKey, value.length));
+                            break;
+                    }
+                }
+            }
+        );
+
+        // Creating and returning the model object
+        return new Model(name, fields);
     }
 
     /**
@@ -173,12 +215,12 @@ export class Blazeit {
                     new EntryPoint(
                         '/' + collection,
                         new Array<Route>(
-                            generateGet(this.models, collection),
-                            generateGetById(this.models, collection),
-                            generateCreate(this.models, collection),
-                            generateSearch(this.models, collection),
-                            generateUpdate(this.models, collection),
-                            generateDelete(this.models, collection),
+                            generateGet(this.database, collection),
+                            generateGetById(this.database, collection),
+                            generateCreate(this.database, collection),
+                            generateSearch(this.database, collection),
+                            generateUpdate(this.database, collection),
+                            generateDelete(this.database, collection)
                         )
                     )
                 );
@@ -192,15 +234,13 @@ export class Blazeit {
      * Create the server from the server object
      */
     private createServer(): void {
-        let port: number;
+        let port: number = 3000;
         let server: any;
         if (this.values.server) {
             if (this.values.server.express) {
                 server = this.values.server.express;
             }
             port = (this.values.server['port']) ? this.values.server['port'] : 3000;
-        } else {
-            port = 3000;
         }
         this.server = new Server(
             port,
