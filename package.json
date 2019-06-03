@@ -32,10 +32,9 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
-    "mocha": "^6.0.2",
+    "mocha": "^6.1.4",
     "mongoose": "^5.4.14",
     "pg": "^7.11.0",
-    "sequelize": "^5.2.8",
-    "sqlite3": "^4.0.8"
+    "sequelize": "^5.8.7"
   }
 }
