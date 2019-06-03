@@ -53,15 +53,15 @@ Here are the possibilities:
 - models
 - logging (default is 'true')
 
-BlazeIt.js relies on Mongoose's data types, you can use any of the available types.
+BlazeIt.js works with its own custom syntax. It supports certain types.
 Here's a list of those types:
 - String
 - Number
 - Date
 - Boolean
 
-You can also create associations by defining the type as 'NAME_OF_ASSOCIATION'.\
-Look below to see an example.
+~~You can also create associations by defining the type as 'NAME_OF_ASSOCIATION'.\
+Look below to see an example.~~ (Will be implemented very soon)
 
 **Example**
 
