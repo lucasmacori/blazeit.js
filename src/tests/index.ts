@@ -3,7 +3,7 @@ import * as Express from 'express';
 
 const app = new Express();
 
-const blazeit = new Blazeit(
+new Blazeit(
     {
         server: {
             port: 3002,
@@ -15,14 +15,15 @@ const blazeit = new Blazeit(
             name: 'db.sqlite',
         },
         models: {
-            employe: {
-                firstName: { type: 'string' },
-                lastName: { type: 'string' },
-                married: { type: 'boolean' }
-            },
             sector: {
-                name: { type: 'string' },
-                creationDate: { type: 'date' }
+                name: {type: 'string'},
+                creationDate: {type: 'date'}
+            },
+            employe: {
+                firstName: {type: 'string', isRequired: true},
+                lastName: {type: 'string', isRequired: true},
+                married: {type: 'boolean'},
+                sector: {type: 'relation'}
             }
         }
     }

@@ -1,6 +1,6 @@
 import * as Mongoose from 'mongoose';
 import * as Sequelize from 'sequelize';
-import { Model } from './classes/model';
+import {Model} from './classes/model';
 
 export class Database {
 
@@ -113,7 +113,7 @@ export class Database {
                 model.name,
                 Mongoose.model(
                     model.name,
-                    new Mongoose.Schema(model.getSequelizeDefinition())
+                    new Mongoose.Schema(model.getMongooseDefinition())
                 )
             );
         } else {

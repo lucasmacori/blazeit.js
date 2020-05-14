@@ -26,15 +26,16 @@
   },
   "homepage": "https://github.com/LegitBaboulinet/blazeit.js#readme",
   "devDependencies": {
-    "@types/node": "^11.9.4",
-    "typescript": "^3.3.3"
+    "@types/node": "^11.15.12",
+    "typescript": "^3.9.2"
   },
   "dependencies": {
-    "body-parser": "^1.18.3",
-    "express": "^4.16.4",
-    "mocha": "^6.1.4",
-    "mongoose": "^5.4.14",
-    "pg": "^7.11.0",
-    "sequelize": "^5.8.7"
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mocha": "^6.2.3",
+    "mongoose": "^5.9.14",
+    "pg": "^7.18.2",
+    "sequelize": "^5.21.9",
+    "sqlite3": "^4.2.0"
   }
 }

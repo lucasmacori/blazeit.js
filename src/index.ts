@@ -12,12 +12,13 @@ import {
     generateSearch,
     generateUpdate
 } from "./lib/routes";
-import { Model } from './lib/classes/model';
-import { Field } from './lib/classes/field';
-import { BooleanField } from './lib/classes/booleanField';
-import { DateField } from './lib/classes/dateField';
-import { NumberField } from './lib/classes/numberField';
-import { StringField } from './lib/classes/stringField';
+import {Model} from './lib/classes/model';
+import {Field} from './lib/classes/field';
+import {BooleanField} from './lib/classes/booleanField';
+import {DateField} from './lib/classes/dateField';
+import {NumberField} from './lib/classes/numberField';
+import {StringField} from './lib/classes/stringField';
+import {RelationField} from "./lib/classes/relationField";
 
 export class Blazeit {
 
@@ -26,30 +27,6 @@ export class Blazeit {
     private database: Database;
     private bodyType: string = 'JSON';
 
-    /**
-     * @param values : the object that contains everything Blazeit needs or does not
-     * Available values:
-     * {
-     *      server: {
-     *          port: YOUR_SERVER_PORT, // Default is 3000
-     *          express: yourExpressInstance
-     *      },
-     *      database: {
-     *          hostname: 'YOUR_HOSTNAME', // 'localhost' if not given
-     *          port: YOUR_PORT, // 27017 if not given,
-     *          databaseName: 'YOUR_DATABASE_NAME', // 'Blazeit' if not given
-     *      },
-     *      models: [
-     *          person: { // Example with a person
-     *              firstName: String,
-     *              lastName: String,
-     *              birthDay: Date,
-     *              isMarried: Boolean,
-     *              numberOfChildren: Number
-     *          }
-     *      ]
-     * }
-     */
     constructor(private values: any) {
         this.checkValues();
         this.replaceBlazeSyntax();
@@ -190,7 +167,16 @@ export class Blazeit {
                         case 'string':
                             fields.push(new StringField(attribute, value.isRequired, value.isPrimaryKey, value.length));
                             break;
+                        case 'relation':
+                            fields.push(new RelationField(attribute, value.isRequired, value.isPrimaryKey));
+                            break;
+                        case '':
+                            throw `You must provide a type for attribute "${attribute}"`;
+                        default:
+                            throw `Type "${value.type} is not supported"`;
                     }
+                } else {
+                    throw `You must provide a type for attribute "${attribute}"`;
                 }
             }
         );
