@@ -232,6 +232,7 @@ export class Blazeit {
             port,
             this.entryPoints,
             this.bodyType,
+            this.values.cors,
             server
         );
         this.server.serve();

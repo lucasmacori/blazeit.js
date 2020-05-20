@@ -3,6 +3,7 @@ import {EntryPoint} from './classes/entryPoint';
 
 import * as Express from 'express';
 import * as BodyParser from 'body-parser';
+import * as cors from 'cors';
 
 export class Server {
     
@@ -12,6 +13,7 @@ export class Server {
         private _port: number,
         private _entryPoints: Array<EntryPoint>,
         private _bodyType: string,
+        private cors: boolean = true,
         private _server = undefined
     ) {
         this.init();
@@ -86,7 +88,7 @@ export class Server {
     /**
      * createEntryPoint
      * Create an entrypoint in the server
-     * @param entryPoint : the entry point to create
+     * @param {any} entryPoint : the entry point to create
      */
     private createEntryPoint(entryPoint: EntryPoint): void {
         entryPoint.routes.forEach(
@@ -99,7 +101,7 @@ export class Server {
     /**
      * createRoute
      * Create a route in the server
-     * @param route : the route to create
+     * @param {any} entryPoint : the route to create
      */
     private createRoute(entryPoint: EntryPoint, route: Route): void {
         // Setting up the router
@@ -152,6 +154,12 @@ export class Server {
         } else {
             this.app = new Express();
         }
+
+        // Cors
+        if (this.cors) {
+            this.app.use(cors());
+        }
+
         if (this.bodyType.toLowerCase() === 'json') {
             this.app.use(BodyParser.json());
         } else {

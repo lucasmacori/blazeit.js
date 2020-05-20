@@ -6,7 +6,7 @@ const app = new Express();
 new Blazeit(
     {
         server: {
-            port: 3002,
+            port: 3000,
             express: app,
             bodyType: 'json'
         },
@@ -15,15 +15,10 @@ new Blazeit(
             name: 'db.sqlite',
         },
         models: {
-            sector: {
-                name: {type: 'string'},
-                creationDate: {type: 'date'}
-            },
-            employe: {
-                firstName: {type: 'string', isRequired: true},
-                lastName: {type: 'string', isRequired: true},
-                married: {type: 'boolean'},
-                sector: {type: 'relation'}
+            task: {
+                title: {type: 'string'},
+                description: {type: 'string'},
+                done: {type: 'boolean'}
             }
         }
     }
