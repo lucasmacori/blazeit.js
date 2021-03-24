@@ -52,15 +52,7 @@ export function validateCreate(req: any, res: any): boolean {
  * @returns : 'true' if valid, 'false' if not. HTTP response is automatically taken care of
  */
 export function validateUpdate(req: any, res: any): boolean {
-    if (validateBody(req, res)) {
-        if (!req.body.id) {
-            res.status(400);
-            res.json({message: 'No \'id\' was provided when updating a row'});
-            return false;
-        } else {
-            return true;
-        }
-    }
+    return validateBody(req, res);
 }
 
 /**
@@ -71,13 +63,5 @@ export function validateUpdate(req: any, res: any): boolean {
  * @returns : 'true' if valid, 'false' if not. HTTP response is automatically taken care of
  */
 export function validateDelete(req: any, res: any): boolean {
-    if (validateBody(req, res)) {
-        if (!req.body.id) {
-            res.status(400);
-            res.json({message: 'No \'id\' was provided when deleting a row'});
-            return false;
-        } else {
-            return true;
-        }
-    }
+    return validateBody(req, res);
 }

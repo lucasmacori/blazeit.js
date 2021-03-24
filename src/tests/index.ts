@@ -11,15 +11,26 @@ new Blazeit(
             bodyType: 'json'
         },
         database: {
-            type: 'sqlite',
-            name: 'db.sqlite',
+            type: 'mysql',
+            hostname: '192.168.0.15',
+            port: 3306,
+            name: 'blazeit',
+            username: 'blazeit',
+            password: 'blazeit'
         },
         models: {
+            person: {
+                firstName: {type: 'string', isRequired: true},
+                lastName: {type: 'string', isRequired: true},
+                birthDay: {type: 'date'}
+            },
             task: {
-                title: {type: 'string'},
+                title: {type: 'string', isRequired: true},
                 description: {type: 'string'},
-                done: {type: 'boolean'}
+                done: {type: 'boolean'},
+                author: {type: 'relation', reference: 'person'}
             }
-        }
+        },
+        cors: true
     }
 );

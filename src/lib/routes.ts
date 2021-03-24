@@ -3,6 +3,8 @@ import {Route} from './classes/route';
 import {validateCreate, validateDelete, validateGetById, validateUpdate} from "./validators";
 import { Database } from './database';
 
+// TODO: Use a generic method that gets the data from Mongoose or Sequelize depeing on the mode
+
 /**
  * generateGet
  * Returns the GET '/' route
@@ -24,7 +26,7 @@ export function generateGet(database: Database, collection: string): Route {
                             } else {
                                 res.status(500);
                                 res.json({
-                                    message: 'Could not get ' + collection + ': ' + err
+                                    message: `Could not get ${collection}: ${err}`
                                 });
                             }
                         }
@@ -37,7 +39,7 @@ export function generateGet(database: Database, collection: string): Route {
                     .catch((err: NodeJS.ErrnoException) => {
                         res.status(500);
                         res.json({
-                            message: 'Could not get ' + collection + ': ' + err
+                            message: `Could not get ${collection}: ${err}`
                         });
                     });
             }
@@ -63,11 +65,18 @@ export function generateGetById(database: Database, collection: string): Route {
                         .exec(
                             (err: NodeJS.ErrnoException, object: any) => {
                                 if (!err) {
-                                    res.json((object) ? object : {});
+                                    if (!object) {
+                                        res.status(404);
+                                        res.json({
+                                            message: `${collection} with id '${req.params.id}' does not exist: ${err}`
+                                        });
+                                    } else {
+                                        res.json((object) ? object : {});
+                                    }
                                 } else {
                                     res.status(500);
                                     res.json({
-                                        message: 'Could not get ' + collection + ': ' + err
+                                        message: `Could not get ${collection}: ${err}`
                                     });
                                 }
                             }
@@ -75,12 +84,19 @@ export function generateGetById(database: Database, collection: string): Route {
                 } else {
                     database.models.get(collection).findByPk(req.params.id)
                         .then((object: any) => {
-                            res.json(object);
+                            if (!object) {
+                                res.status(404);
+                                res.json({
+                                    message: `${collection} with id '${req.params.id}' does not exist`
+                                });
+                            } else {
+                                res.json((object) ? object : {});
+                            }
                         })
                         .catch((err: NodeJS.ErrnoException) => {
                             res.status(500);
                             res.json({
-                                message: 'Could not get ' + collection + ': ' + err
+                                message: `Could not get ${collection}: ${err}`
                             });
                         });
                 } 
@@ -107,11 +123,12 @@ export function generateCreate(database: Database, collection: string): Route {
                         req.body,
                         (err: NodeJS.ErrnoException) => {
                             if (!err) {
+                                res.status(201);
                                 res.json({status: 'OK'});
                             } else {
                                 res.status(500);
                                 res.json({
-                                    message: 'Could not create ' + collection + ': ' + err
+                                    message: `Could not create ${collection}: ${err}`
                                 });
                             }
                         }
@@ -119,13 +136,14 @@ export function generateCreate(database: Database, collection: string): Route {
                 } else {
                     database.models.get(collection).create(req.body)
                         .then(() => {
+                            res.status(201);
                             res.json({status: 'OK'});
                         })
                         .catch((err: NodeJS.ErrnoException) => {
                             res.status(500);
-                                res.json({
-                                    message: 'Could not create ' + collection + ': ' + err
-                                });
+                            res.json({
+                                message: `Could not create ${collection}: ${err}`
+                            });
                         });
                 }
             }
@@ -154,7 +172,7 @@ export function generateSearch(database: Database, collection: string): Route {
                             } else {
                                 res.status(500);
                                 res.json({
-                                    message: 'Could not search for ' + collection + ': ' + err
+                                    message: `Could not search for ${collection}: ${err}`
                                 });
                             }
                         }
@@ -167,7 +185,7 @@ export function generateSearch(database: Database, collection: string): Route {
                     .catch((err: NodeJS.ErrnoException) => {
                         res.status(500);
                         res.json({
-                            message: 'Could not search for ' + collection + ': ' + err
+                            message: `Could not search for ${collection}: ${err}`
                         });
                     });
             } 
@@ -183,35 +201,37 @@ export function generateSearch(database: Database, collection: string): Route {
  */
 export function generateUpdate(database: Database, collection: string): Route {
     return new Route(
-        '/',
+        '/:id',
         'PUT',
         'PUT ' + collection,
         (req: Request, res: Response) => {
             if (validateUpdate(req, res)) {
                 if (database.type === 'mongodb') {
                     database.models.get(collection).updateOne(
-                        {_id: req.body._id},
+                        {_id: req.params.id},
                         req.body,
                         (err: NodeJS.ErrnoException) => {
                             if (!err) {
                                 res.json({status: 'OK'});
                             } else {
+                                // TODO: Send 404 status code when entity is not found
                                 res.status(500);
                                 res.json({
-                                    message: 'Could not update ' + collection + ': ' + err
+                                    message: `Could not update ${collection}: ${err}`
                                 });
                             }
                         }
                     );
                 } else {
-                    database.models.get(collection).update(req.body, { where: { id: req.body.id } })
+                    database.models.get(collection).update(req.body, { where: { id: req.params.id } })
                         .then(() => {
                             res.json({status: 'OK'});
                         })
                         .catch((err: NodeJS.ErrnoException) => {
+                            // TODO: Send 404 status code when entity is not found
                             res.status(500);
                             res.json({
-                                message: 'Could not update ' + collection + ': ' + err
+                                message: `Could not update ${collection}: ${err}`
                             });
                         });
                 }  
@@ -228,34 +248,36 @@ export function generateUpdate(database: Database, collection: string): Route {
  */
 export function generateDelete(database: Database, collection: string): Route {
     return new Route(
-        '/',
+        '/:id',
         'DELETE',
         'DELETE ' + collection,
         (req: Request, res: Response) => {
             if (validateDelete(req, res)) {
                 if (database.type === 'mongodb') {
-                    database.models.get(collection).deleteOne({_id: req.body._id})
+                    database.models.get(collection).deleteOne({_id: req.params.id})
                         .exec(
                             (err: NodeJS.ErrnoException) => {
                                 if (!err) {
                                     res.json({status: 'OK'});
                                 } else {
+                                    // TODO: Send 404 status code when entity is not found
                                     res.status(500);
                                     res.json({
-                                        message: 'Could not delete ' + collection + ': ' + err
+                                        message: `Could not delete ${collection}: ${err}`
                                     });
                                 }
                             }
                         );
                 } else {
-                    database.models.get(collection).destroy({ where: { id: req.body.id } })
+                    database.models.get(collection).destroy({ where: { id: req.params.id } })
                         .then(() => {
                             res.json({status: 'OK'});
                         })
                         .catch((err: NodeJS.ErrnoException) => {
+                            // TODO: Send 404 status code when entity is not found
                             res.status(500);
                             res.json({
-                                message: 'Could not delete ' + collection + ': ' + err
+                                message: `Could not delete ${collection}: ${err}`
                             });
                         });
                 } 

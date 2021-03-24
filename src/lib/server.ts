@@ -60,7 +60,7 @@ export class Server {
             portStr,
             (err: any) => {
                 if (!err) {
-                    console.log('Server is listening on port ' + portStr);
+                    console.log(`Server is listening on port ${portStr}`);
                 } else {
                     throw err;
                 }

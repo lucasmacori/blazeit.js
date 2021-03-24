@@ -34,7 +34,7 @@ export class Model {
         return definition;
     }
 
-    getSequelizeDefinition(): object {
+    getSequelizeDefinition(): any {
         const definition = {};
         this._fields.forEach(
             (field: Field) => {

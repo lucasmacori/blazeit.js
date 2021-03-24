@@ -16,7 +16,7 @@ export class Database {
         this.init();
     }
 
-    private _connection: any;
+    private _connection: Sequelize.Sequelize;
     private _models: Map<string, any> = new Map<string, any>();
 
     // Getters and setters
@@ -99,7 +99,6 @@ export class Database {
                     logging: this._logging
                 });
             } else {
-                console.log(this._name);
                 throw 'When using sqlite, you must provide a database name (which is your sqlite file path)';
             }
         } else {
@@ -117,11 +116,16 @@ export class Database {
                 )
             );
         } else {
+            console.log('Création du model ' + model.name)
             const sModel =  this._connection.define(
                 model.name,
-                model.getSequelizeDefinition()
+                model.getSequelizeDefinition(),
+                {
+                    // Prevent Sequelize from using a pluralized name
+                    freezeTableName: true
+                }
             );
-            sModel.sync();
+            sModel.sync({alter: true});
             this.models.set(
                 model.name,
                 sModel

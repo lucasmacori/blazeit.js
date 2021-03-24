@@ -20,6 +20,8 @@ import {NumberField} from './lib/classes/numberField';
 import {StringField} from './lib/classes/stringField';
 import {RelationField} from "./lib/classes/relationField";
 
+import {Values} from './lib/interfaces/in/values';
+
 export class Blazeit {
 
     private server: Server;
@@ -27,7 +29,7 @@ export class Blazeit {
     private database: Database;
     private bodyType: string = 'JSON';
 
-    constructor(private values: any) {
+    constructor(private values: Values) {
         this.checkValues();
         this.replaceBlazeSyntax();
         this.createDatabase();
@@ -58,7 +60,7 @@ export class Blazeit {
      */
     // TODO: Implement the new version for this
     private replaceBlazeSyntax(): void {
-        const collections: Array<string> = Object.keys(this.values.models);
+        /*const collections: Array<string> = Object.keys(this.values.models);
         collections.forEach(
             (collection: string) => {
                 const values: Array<string> = Object.keys(this.values.models[collection]);
@@ -69,12 +71,12 @@ export class Blazeit {
                             if (collections.indexOf(value) === -1) {
                                 throw 'The \'' + value + '\' model does not exist. Please check the syntax';
                             }
-                            this.values.models[collection][param] = { type: Mongoose.Schema.Types.ObjectId, ref: value };
+                            // this.values.models[collection][param] = { type: Mongoose.Schema.Types.ObjectId, ref: value };
                         }
                     }
                 )
             }
-        )
+        )*/
     }
 
     /**
@@ -107,15 +109,16 @@ export class Blazeit {
         let username: string;
         let password: string;
         if (this.values.database) {
-            type = (this.values.database['type']) ? this.values.database['type'] : 'mongodb';
-            hostname = (this.values.database['hostname']) ? this.values.database['hostname'] : undefined;
-            port = (this.values.database['port']) ? this.values.database['port'] : undefined;
-            name = (this.values.database['name']) ? this.values.database['name'] : undefined;
-            username = (this.values.database['username']) ? this.values.database['username'] : undefined;
-            password = (this.values.database['password']) ? this.values.database['password'] : undefined;
+            type = (this.values.database.type) ? this.values.database.type : 'mongodb';
+            hostname = (this.values.database.hostname) ? this.values.database.hostname : undefined;
+            port = (this.values.database.port) ? this.values.database.port : undefined;
+            name = (this.values.database.name) ? this.values.database.name : undefined;
+            username = (this.values.database.username) ? this.values.database.username : undefined;
+            password = (this.values.database.password) ? this.values.database.password : undefined;
             if (type != 'sqlite') {
                 hostname = (this.values.database['hostname']) ? this.values.database['hostname'] : 'localhost';
             }
+            this.values.logging = (this.values.logging) ? this.values.logging : console.log;
         }
         this.database = new Database(hostname, name, type, port, username, password, this.values.logging);
     }
@@ -168,7 +171,7 @@ export class Blazeit {
                             fields.push(new StringField(attribute, value.isRequired, value.isPrimaryKey, value.length));
                             break;
                         case 'relation':
-                            fields.push(new RelationField(attribute, value.isRequired, value.isPrimaryKey));
+                            fields.push(new RelationField(attribute, value.isRequired, value.isPrimaryKey, value.reference));
                             break;
                         case '':
                             throw `You must provide a type for attribute "${attribute}"`;
