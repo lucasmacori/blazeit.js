@@ -8,9 +8,22 @@ export class RelationField extends Field {
         private _required: boolean = false,
         private _isPrimaryKey: boolean = false,
         private _reference: string = undefined,
+        private _cardinality: string = 'manyToOne',
         private _key: string = 'id'
     ) {
         super(_name, _required, _isPrimaryKey);
+    }
+
+    public get reference(): string {
+        return this._reference
+    }
+
+    public get cardinality(): string {
+        return this._cardinality
+    }
+
+    public get key(): string {
+        return this._key
     }
 
     translateForMongoose(): object {

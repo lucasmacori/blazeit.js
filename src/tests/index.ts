@@ -8,15 +8,12 @@ new Blazeit(
         server: {
             port: 3000,
             express: app,
-            bodyType: 'json'
+            bodyType: 'json',
         },
+        logging: true,
         database: {
-            type: 'mysql',
-            hostname: '192.168.0.15',
-            port: 3306,
-            name: 'blazeit',
-            username: 'blazeit',
-            password: 'blazeit'
+            type: 'sqlite',
+            name: 'db.sqlite',
         },
         models: {
             person: {
@@ -28,7 +25,13 @@ new Blazeit(
                 title: {type: 'string', isRequired: true},
                 description: {type: 'string'},
                 done: {type: 'boolean'},
-                author: {type: 'relation', reference: 'person'}
+                author: {type: 'relation', reference: 'person', cardinality: 'manyToOne'}
+            },
+            car: {
+                brand: {type: 'string', isRequired: true},
+                model: {type: 'string', isRequired: true},
+                cylinder: {type: 'number', isRequired: true},
+                colour: {type: 'string', isRequired: true}
             }
         },
         cors: true

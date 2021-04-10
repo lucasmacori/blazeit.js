@@ -1,12 +1,15 @@
 import * as Mongoose from 'mongoose';
 import * as Sequelize from 'sequelize';
+import { Field } from './classes/field';
 import {Model} from './classes/model';
+import { RelationField } from './classes/relationField';
 
 export class Database {
 
     constructor(
         private _hostname: string,
         private _name: string,
+        private _schema: string,
         private _type: string = undefined,
         private _port: number = undefined,
         private _username: string = undefined,
@@ -40,6 +43,10 @@ export class Database {
         return this._port;
     }
 
+    public get schema(): string {
+        return this._schema;
+    }
+
     public get type(): string {
         return this._type;
     }
@@ -68,6 +75,7 @@ export class Database {
         const hostnameStr: string = (this._hostname) ? this._hostname : 'localhost';
         const portStr: string = (this._port) ? ':' + this._port : '';
         const nameStr: string = (this._name) ? this._name : 'Blazeit';
+        const schemaStr: string = (this._schema) ? this._schema : '';
         const passwordStr: string = (this._password) ? this._password : '';
         this._type = this._type.toLowerCase();
         if (this._type === 'mongodb') {
@@ -85,7 +93,8 @@ export class Database {
                 this._connection = new Sequelize(this._name, this._username, passwordStr, {
                     host: hostnameStr,
                     dialect: this._type,
-                    logging: this._logging
+                    logging: this._logging,
+                    schema: schemaStr
                 });
             } else {
                 throw 'When using mysql, mariadb, postgres or mssql. You must provide a database name and an username';
@@ -116,7 +125,6 @@ export class Database {
                 )
             );
         } else {
-            console.log('Création du model ' + model.name)
             const sModel =  this._connection.define(
                 model.name,
                 model.getSequelizeDefinition(),
@@ -125,6 +133,20 @@ export class Database {
                     freezeTableName: true
                 }
             );
+
+            // Creating relations
+            // Removing this as this creates a foreign key on the foreign key
+            // Therefore, it becomes impossible to insert a lign through the API
+            /*model.fields.forEach((field: RelationField) => {
+                if (field.constructor.name === 'RelationField') {
+                    if (field.cardinality === 'manyToOne') {
+                        const relationModel: any = this._models.get(field.reference);
+                        relationModel.belongsTo(sModel, {as: field.fieldName, foreignKey: 'id'});
+                    }
+                }
+            });*/
+
+            // Saving the model
             sModel.sync({alter: true});
             this.models.set(
                 model.name,

@@ -3,7 +3,6 @@ import {EntryPoint} from './lib/classes/entryPoint';
 import {Database} from './lib/database';
 import {Route} from './lib/classes/route';
 
-import * as Mongoose from 'mongoose';
 import {
     generateCreate,
     generateDelete,
@@ -19,6 +18,7 @@ import {DateField} from './lib/classes/dateField';
 import {NumberField} from './lib/classes/numberField';
 import {StringField} from './lib/classes/stringField';
 import {RelationField} from "./lib/classes/relationField";
+import * as Sequelize from 'sequelize';
 
 import {Values} from './lib/interfaces/in/values';
 
@@ -106,6 +106,7 @@ export class Blazeit {
         let hostname: string = 'localhost';
         let port: number = 27017;
         let name: string = 'Blazeit';
+        let schema: string;
         let username: string;
         let password: string;
         if (this.values.database) {
@@ -113,6 +114,7 @@ export class Blazeit {
             hostname = (this.values.database.hostname) ? this.values.database.hostname : undefined;
             port = (this.values.database.port) ? this.values.database.port : undefined;
             name = (this.values.database.name) ? this.values.database.name : undefined;
+            schema = (this.values.database.schema) ? this.values.database.schema : undefined;
             username = (this.values.database.username) ? this.values.database.username : undefined;
             password = (this.values.database.password) ? this.values.database.password : undefined;
             if (type != 'sqlite') {
@@ -120,7 +122,7 @@ export class Blazeit {
             }
             this.values.logging = (this.values.logging) ? this.values.logging : console.log;
         }
-        this.database = new Database(hostname, name, type, port, username, password, this.values.logging);
+        this.database = new Database(hostname, name, schema, type, port, username, password, this.values.logging);
     }
 
     /**
@@ -171,7 +173,7 @@ export class Blazeit {
                             fields.push(new StringField(attribute, value.isRequired, value.isPrimaryKey, value.length));
                             break;
                         case 'relation':
-                            fields.push(new RelationField(attribute, value.isRequired, value.isPrimaryKey, value.reference));
+                            fields.push(new RelationField(attribute, value.isRequired, value.isPrimaryKey, value.reference, value.cardinality, value.key));
                             break;
                         case '':
                             throw `You must provide a type for attribute "${attribute}"`;
@@ -204,7 +206,7 @@ export class Blazeit {
                     new EntryPoint(
                         '/' + collection,
                         new Array<Route>(
-                            generateGet(this.database, collection),
+                            generateGet(this.database, collection, this.database.models),
                             generateGetById(this.database, collection),
                             generateCreate(this.database, collection),
                             generateSearch(this.database, collection),

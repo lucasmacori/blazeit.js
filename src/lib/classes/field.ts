@@ -1,6 +1,6 @@
 import { IField } from "../interfaces/field";
 
-export class Field implements IField {
+export abstract class Field implements IField {
     
     constructor(
         private _fieldName: string,

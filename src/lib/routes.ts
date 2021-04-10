@@ -3,7 +3,7 @@ import {Route} from './classes/route';
 import {validateCreate, validateDelete, validateGetById, validateUpdate} from "./validators";
 import { Database } from './database';
 
-// TODO: Use a generic method that gets the data from Mongoose or Sequelize depeing on the mode
+// TODO: Use a generic method that gets the data from Mongoose or Sequelize depending on the mode
 
 /**
  * generateGet
@@ -11,12 +11,20 @@ import { Database } from './database';
  * @param database: Database
  * @param collection: string
  */
-export function generateGet(database: Database, collection: string): Route {
+export function generateGet(database: Database, collection: string, models: Map<string, any>): Route {
     return new Route(
         '/',
         'GET',
         'GET ' + collection,
         (req: Request, res: Response) => {
+
+            let includeModels = [];
+            getIncludeList(database.models)
+                .then((includes) => {
+                    includeModels = includes;
+                })
+                .catch(err => { throw err; });
+
             if (database.type === 'mongodb') {
                 database.models.get(collection).find({})
                     .exec(
@@ -32,12 +40,11 @@ export function generateGet(database: Database, collection: string): Route {
                         }
                     );
             } else {
-                database.models.get(collection).findAll()
+                database.models.get(collection).findAll({ include: includeModels })
                     .then((objects: Array<any>) => {
                         res.json(objects);
                     })
                     .catch((err: NodeJS.ErrnoException) => {
-                        res.status(500);
                         res.json({
                             message: `Could not get ${collection}: ${err}`
                         });
@@ -284,4 +291,13 @@ export function generateDelete(database: Database, collection: string): Route {
             }
         }
     )
+}
+
+async function getIncludeList(models: Map<string, any>)
+{
+    const includes = new Array<any>();
+    models.forEach((value: any, key: string) => {
+        includes.push(value);
+    });
+    return includes;
 }
