@@ -3,6 +3,7 @@ import {EntryPoint} from './classes/entryPoint';
 
 import * as Express from 'express';
 import * as BodyParser from 'body-parser';
+import * as cors from 'cors';
 
 export class Server {
     
@@ -157,6 +158,7 @@ export class Server {
         } else {
             this.app.use(BodyParser.urlencoded({extended: false}))
         }
+        this.app.use(cors())
         this.initRoutes();
     }
 }
